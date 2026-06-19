@@ -1,1 +1,149 @@
-Invalid switch - /
++---BERT_MASK
++---Code of AMC LLM_extracted
+|   \---Code of AMC LLM
+|       +---data
+|       +---reed-muller-codes-matlab-main
+|       \---txt_files
++---DJSCC
+|   +---14zhen
+|   +---7zhen
+|   +---model
+|   +---NoError
+|   +---outputdata
+|   +---resizedata
+|   \---__pycache__
++---IMAGE_TO_TEXT
+|   \---IMAGE_TO_TEXT
+|       +---.github
+|       |   \---workflows
+|       +---.idea
+|       |   \---inspectionProfiles
+|       +---app
+|       +---assets
+|       +---dataset_card
+|       |   \---imgs
+|       +---docs
+|       |   \---_static
+|       +---examples
+|       +---lavis
+|       |   +---common
+|       |   |   +---vqa_tools
+|       |   |   |   \---__pycache__
+|       |   |   \---__pycache__
+|       |   +---configs
+|       |   |   +---datasets
+|       |   |   |   +---aokvqa
+|       |   |   |   +---avsd
+|       |   |   |   +---coco
+|       |   |   |   +---conceptual_caption
+|       |   |   |   +---didemo
+|       |   |   |   +---flickr30k
+|       |   |   |   +---gqa
+|       |   |   |   +---imagenet
+|       |   |   |   +---laion
+|       |   |   |   +---msrvtt
+|       |   |   |   +---msvd
+|       |   |   |   +---nlvr
+|       |   |   |   +---nocaps
+|       |   |   |   +---okvqa
+|       |   |   |   +---sbu_caption
+|       |   |   |   +---snli_ve
+|       |   |   |   +---vatex
+|       |   |   |   \---vg
+|       |   |   \---models
+|       |   |       +---blip2
+|       |   |       +---clip
+|       |   |       +---img2prompt-vqa
+|       |   |       \---pnp-vqa
+|       |   +---datasets
+|       |   |   +---builders
+|       |   |   |   \---__pycache__
+|       |   |   +---datasets
+|       |   |   |   \---__pycache__
+|       |   |   +---download_scripts
+|       |   |   |   \---DownloadConceptualCaptions
+|       |   |   \---__pycache__
+|       |   +---models
+|       |   |   +---albef_models
+|       |   |   |   \---__pycache__
+|       |   |   +---alpro_models
+|       |   |   |   \---__pycache__
+|       |   |   +---blip2_models
+|       |   |   |   \---__pycache__
+|       |   |   +---blip_models
+|       |   |   |   \---__pycache__
+|       |   |   +---clip_models
+|       |   |   |   +---pics
+|       |   |   |   \---__pycache__
+|       |   |   +---gpt_models
+|       |   |   |   \---__pycache__
+|       |   |   +---img2prompt_models
+|       |   |   |   \---__pycache__
+|       |   |   +---pnp_vqa_models
+|       |   |   |   \---__pycache__
+|       |   |   +---timesformer
+|       |   |   |   \---__pycache__
+|       |   |   \---__pycache__
+|       |   +---processors
+|       |   |   \---__pycache__
+|       |   +---projects
+|       |   |   +---albef
+|       |   |   |   +---eval
+|       |   |   |   \---train
+|       |   |   +---alpro
+|       |   |   |   +---eval
+|       |   |   |   \---train
+|       |   |   +---blip
+|       |   |   |   +---eval
+|       |   |   |   \---train
+|       |   |   +---blip2
+|       |   |   |   +---eval
+|       |   |   |   \---train
+|       |   |   +---clip
+|       |   |   +---gpt
+|       |   |   |   +---eval
+|       |   |   |   \---train
+|       |   |   \---pnp-vqa
+|       |   |       \---eval
+|       |   +---runners
+|       |   +---tasks
+|       |   |   \---__pycache__
+|       |   \---__pycache__
+|       +---ourdataset
+|       +---projects
+|       |   +---blip-diffusion
+|       |   +---blip2
+|       |   +---img2llm-vqa
+|       |   +---img2prompt-vqa
+|       |   +---instructblip
+|       |   \---pnp-vqa
+|       +---run_scripts
+|       |   +---albef
+|       |   |   +---eval
+|       |   |   \---train
+|       |   +---alpro
+|       |   |   +---eval
+|       |   |   \---train
+|       |   +---blip
+|       |   |   +---eval
+|       |   |   \---train
+|       |   +---blip2
+|       |   |   +---eval
+|       |   |   \---train
+|       |   +---clip
+|       |   |   \---eval
+|       |   +---gpt
+|       |   |   +---eval
+|       |   |   \---train
+|       |   \---pnp-vqa
+|       |       \---eval
+|       \---tests
+|           \---models
++---outputdata
++---resizedata
++---testdata
+|   +---resizedata
+|   \---testdata
+\---TEXT_TO_IMAGE
+    +---outputdata
+    \---__pycache__
