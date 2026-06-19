@@ -1,0 +1,125 @@
+[
+  {
+    "label": "DeepJSCC-7frame-train@0",
+    "num_frames": 7,
+    "data": [
+      {
+        "loss_prob": 0.001,
+        "similarity": 0.71368896484375,
+        "psnr": 18.25686595167943
+      },
+      {
+        "loss_prob": 0.004,
+        "similarity": 0.71215576171875,
+        "psnr": 18.258366466292422
+      },
+      {
+        "loss_prob": 0.007,
+        "similarity": 0.71109130859375,
+        "psnr": 18.262043864024356
+      },
+      {
+        "loss_prob": 0.01,
+        "similarity": 0.71102294921875,
+        "psnr": 18.248117395078324
+      },
+      {
+        "loss_prob": 0.04,
+        "similarity": 0.70133544921875,
+        "psnr": 18.39177029661695
+      },
+      {
+        "loss_prob": 0.07,
+        "similarity": 0.69067626953125,
+        "psnr": 18.431297400224842
+      },
+      {
+        "loss_prob": 0.1,
+        "similarity": 0.68242431640625,
+        "psnr": 18.552887529382616
+      }
+    ]
+  },
+  {
+    "label": "DeepJSCC-7frame-train@0.01",
+    "num_frames": 7,
+    "data": [
+      {
+        "loss_prob": 0.001,
+        "similarity": 0.71383544921875,
+        "psnr": 18.225793985869615
+      },
+      {
+        "loss_prob": 0.004,
+        "similarity": 0.71315673828125,
+        "psnr": 18.261681074252937
+      },
+      {
+        "loss_prob": 0.007,
+        "similarity": 0.70805419921875,
+        "psnr": 18.328150758513583
+      },
+      {
+        "loss_prob": 0.01,
+        "similarity": 0.71243896484375,
+        "psnr": 18.246954753311854
+      },
+      {
+        "loss_prob": 0.04,
+        "similarity": 0.70260498046875,
+        "psnr": 18.38564132683245
+      },
+      {
+        "loss_prob": 0.07,
+        "similarity": 0.69348388671875,
+        "psnr": 18.5040652917859
+      },
+      {
+        "loss_prob": 0.1,
+        "similarity": 0.679736328125,
+        "psnr": 18.585357736584594
+      }
+    ]
+  },
+  {
+    "label": "DeepJSCC-14frame-train@0",
+    "num_frames": 14,
+    "data": [
+      {
+        "loss_prob": 0.001,
+        "similarity": 0.749912109375,
+        "psnr": 21.302450761063024
+      },
+      {
+        "loss_prob": 0.004,
+        "similarity": 0.752587890625,
+        "psnr": 21.411549119887887
+      },
+      {
+        "loss_prob": 0.007,
+        "similarity": 0.7483154296875,
+        "psnr": 21.267668946504887
+      },
+      {
+        "loss_prob": 0.01,
+        "similarity": 0.748984375,
+        "psnr": 21.226866065324298
+      },
+      {
+        "loss_prob": 0.04,
+        "similarity": 0.733896484375,
+        "psnr": 20.890940891757417
+      },
+      {
+        "loss_prob": 0.07,
+        "similarity": 0.7186328125,
+        "psnr": 20.321669106323636
+      },
+      {
+        "loss_prob": 0.1,
+        "similarity": 0.7020947265625,
+        "psnr": 19.371838744510864
+      }
+    ]
+  }
+]

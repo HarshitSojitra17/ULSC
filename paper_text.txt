@@ -1,0 +1,1440 @@
+=== PAGE 1 ===
+Received 22 May 2024; revised 1 October 2024 and 12 December 2024; accepted 13 January 2025.
+Date of publication 16 January 2025; date of current version 30 January 2025.
+The associate editor coordinating the review of this article and approving it for publication was Y. Deng.
+Digital Object Identifier 10.1109/TMLCN.2025.3530875
+Semantic Importance-Aware
+Communications With Semantic Correction
+Using Large Language Models
+SHUAISHUAI GUO
+1 (Senior Member, IEEE), YANHU WANG1, JIA YE
+2 (Member, IEEE),
+ANBANG ZHANG
+1, PENG ZHANG
+3 (Member, IEEE), AND KUN XU4
+1School of Control Science and Engineering, Shandong University, Jinan, Shandong 250001, China
+2School of Electrical Engineering, Chongqing University, Chongqing 400044, China
+3School of Physics and Electronic Information, Weifang University, Weifang 261061, China
+4Shandong Inspur Intelligent Building Technology Company Ltd., Jinan, Shandong 250001, China
+CORRESPONDING AUTHORS: S. GUO (shuaishuai_guo@sdu.edu.cn) AND J. YE (jia.ye@cqu.edu.cn)
+This work was supported in part by the National Natural Science Foundation of China under Grant 62171262, in part by the Fundamental
+Research Funds for the Central Universities under Grant 2024CDJXY006, in part by Shandong Provincial Natural Science Foundation under
+Grant ZR2021YQ47, and in part by Taishan Young Scholar under Grant tsqn201909043.
+The code can be available at https://github.com/SSG2019/ULSC.
+ABSTRACT
+Semantic communications, a promising approach for agent-human and agent-agent inter-
+actions, typically operate at a feature level, lacking true semantic understanding. This paper explores
+understanding-level semantic communications (ULSC), transforming visual data into human-intelligible
+semantic content. We employ an image caption neural network (ICNN) to derive semantic representations
+from visual data, expressed as natural language descriptions. These are further refined using a pre-trained
+large language model (LLM) for importance quantification and semantic error correction. The subsequent
+semantic importance-aware communications (SIAC) aim to minimize semantic loss while respecting trans-
+mission delay constraints, exemplified through adaptive modulation and coding strategies. At the receiving
+end, LLM-based semantic error correction is utilized. If visual data recreation is desired, a pre-trained gener-
+ative artificial intelligence (AI) model can regenerate it using the corrected descriptions. We assess semantic
+similarities between transmitted and recovered content, demonstrating ULSC’s superior ability to convey
+semantic understanding compared to feature-level semantic communications (FLSC). ULSC’s conversion
+of visual data to natural language facilitates various cognitive tasks, leveraging human knowledge bases.
+Additionally, this method enhances privacy, as neither original data nor features are directly transmitted.
+INDEX TERMS
+Semantic communications, semantic error correction, large language models, generative
+artificial intelligence.
+I. INTRODUCTION
+R
+ECENT developments in semantic communications,
+previously underexplored or overlooked, have pro-
+pelled this field to the forefront of scholarly inquiry [1]. This
+renewed focus is driven by several key factors: advancements
+in deep learning technologies, the evolution of applications
+involving both agent-human and agent-agent communica-
+tions, and a growing recognition of its critical role in
+transcending the limitations of system designs governed by
+Shannon’s communication theory [2], [3], [4], [5].
+A. RELATED WORK
+The evolution of semantic communications has been marked
+by a transition from transmitting original data to channel-
+robust, low-dimensional latent space representations. This
+paper delineates three primary categories based on the nature
+of these representations.
+1) CONTINUOUS LATENT SPACE REPRESENTATIONS
+Continuous latent space representations involve encod-
+ing original data into continuous-valued vectors. Various
+232
+ 2025 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License.
+For more information, see https://creativecommons.org/licenses/by/4.0/
+VOLUME 3, 2025
+m. important
+just read 
+important / moto/ how
+how working 
+
+
+=== PAGE 2 ===
+Guo et al.: SIAC With Semantic Correction Using Large Language Models
+methodologies, including autoencoder (AE) [6], [7], vari-
+ational autoencoder (VAE) [8], and generative adversarial
+network (GAN) [9], facilitate this process. These methods
+enable the encoding of source data into a compact continuous
+space, emphasizing essential features while omitting redun-
+dant elements, thereby optimizing transmission efficiency.
+This approach aids in tasks such as retrieval, classification,
+and reconstruction, as exemplified in studies focused on
+image reconstruction [10] and image retrieval [11], which
+demonstrate enhanced performance compared to traditional
+communication systems. Recently, semantic communication
+applications have expanded to encompass text [12], [13],
+audio [14], [15], video [16], and graph data [17], show-
+casing promising results. However, integration with existing
+digital communication systems remains a challenge due to
+compatibility issues, necessitating substantial system-wide
+updates [18].
+2) DISCRETE LATENT SPACE REPRESENTATIONS
+This category involves transforming continuous semantic
+vectors into discrete codewords, aligning with digital com-
+munication systems’ structures. Xie and Qin [19] developed
+quantization-based feasible constellations for existing sys-
+tems. The VAE’s Gaussian latent variable distribution was
+modified to a Bernoulli distribution for discrete representa-
+tion acquisition [20], although this added complexity to the
+loss computation. Nemati et al. [21] introduced a vector quan-
+tized VAE (VQ-VAE) based joint source and channel coding
+approach, employing a shared codebook between transmitter
+and receiver for mapping semantic vectors to codewords. This
+method effectively clusters semantic vectors, with codewords
+serving as class centers. Subsequent studies [22], [23], [24],
+[25] have proposed variations in encoder and decoder archi-
+tectures, while retaining the discrete representation principle
+through codebook construction.
+3) NATURAL LANGUAGE REPRESENTATIONS
+Compared to feature-level systems, this approach bridges the
+semantic gap between low-level data and high-level human-
+related meanings. It uses a natural language representation
+to map data into semantic domains that can be understood
+by humans. This approach has been explored in a num-
+ber of works. For example, [26] studies how to use deep
+learning techniques to transform images into informative text
+descriptions. Reference [27] further explores how this con-
+version process can be optimized to produce a more accurate
+text representation. Focusing on the wireless communication
+environment, [28] studies how to effectively transmit these
+semantically rich text descriptions. This approach not only
+improves the quality of interaction between machines and
+humans, but also enhances the semantic communication abil-
+ity between machines.
+B. CONTRIBUTIONS OF THIS WORK
+This paper introduces a novel understanding-level semantic
+communications (ULSC) system, adeptly designed for seam-
+less integration with existing communication networks. The
+system is characterized by its utilization of advanced com-
+ponents such as pre-trained image caption neural networks
+(ICNNs), and large language models (LLMs). Compared
+with existing mixed image-text transmission systems [26],
+[27], [28], our proposed ULSC not only focuses on feature
+extraction and encoding, but also prioritizes processing and
+transmission of the most critical semantic information by
+introducing a semantic importance aware mechanism. The
+contributions of this work are outlined as follows:
+• This work introduces a novel method for quantifying
+the semantic importance of transmitted messages using
+pre-trained LLMs. Unlike existing methods that focus
+on feature-level transmission, our approach enables
+frame-level prioritization of semantically critical infor-
+mation, optimizing bandwidth usage and transmission
+reliability in challenging network conditions.
+• We present a semantic error correction mechanism
+that leverages the deep contextual understanding of
+LLMs (e.g., Bidirectional Encoder Representations
+from Transformers (BERT)). By predicting and filling
+in missing or corrupted frames of transmitted messages,
+our approach significantly reduces semantic loss.
+• Our framework enhances privacy protection by trans-
+forming raw visual data into high-level semantic repre-
+sentations, which are more difficult to reverse-engineer.
+This provides a higher level of security compared
+to traditional feature-level communication systems,
+as unauthorized entities cannot easily infer sensitive
+information from intercepted transmissions. We demon-
+strate the effectiveness of this approach through experi-
+ments involving model inversion attacks.
+• We
+provide
+a
+thorough
+evaluation
+of
+our
+pro-
+posed ULSC system, comparing it against traditional
+feature-level semantic communication methods. Our
+results demonstrate that the use of LLMs not only
+reduces semantic loss but also improves system robust-
+ness and privacy protection.
+C. ORGANIZATION
+The remainder of this paper is methodically structured to
+guide readers through our comprehensive research in ULSC.
+Section II begins with an in-depth examination of the ULSC
+system model, detailing the transceiver structures and mathe-
+matical modeling essential to our approach. This is followed
+by Section III, which delves into the transmitter functions,
+particularly focusing on the conversion of visual data to
+natural language and the quantification of frame importance.
+Section IV discusses the implementation of frame-level,
+semantic importance-aware communications over networks,
+incorporating a thorough performance evaluation and sys-
+tem optimization in the context of frame erasure channels.
+In Section V, the paper shifts focus to the receiver’s role,
+elaborating on the use of a pre-trained language model for
+semantic error correction and the application of pre-trained
+generative AI models for visual data generation. Section VI
+VOLUME 3, 2025
+233
+like problem statement
+
+
+=== PAGE 3 ===
+FIGURE 1. Understanding-level semantic communications to reliably transmit the semantic understanding of visual data with
+limited communication between the transmitter and the receiver under the support of human knowledge bases.
+presents our experimental studies and discussions, offering
+crucial insights into the practical applications and effec-
+tiveness of the proposed system. In Section VII, some key
+insights and future research directions are discussed. Finally,
+the paper culminates in Section VIII with conclusions that
+summarize our key findings and contributions.
+II. SYSTEM MODEL AND PROBLEM DESCRIPTION
+We consider an understanding-level semantic communication
+system, as shown in Fig. 1. The system aims to convey
+the semantic essence of visual information in the context
+of limited communication bandwidth and network resources.
+This is achieved by transforming visual data into natural lan-
+guage descriptions and employing semantic error correction
+techniques.
+A. SYSTEM MODEL
+The ULSC system model includes a transmitter with a visual
+input function that processes visual data through an image
+captioning neural network (ICNN) and generates natural lan-
+guage descriptions. Let S ∈RN represent the input visual
+data, where N is the dimension of the image data. The ICNN
+processes this data and converts it into a natural language
+description X ∈ZD, where Z is the vocabulary and D is
+the number of words. The mathematical formula for this
+conversion is:
+X = fα(S),
+(1)
+where fα(·) is the ICNN function, parameterized by the neural
+network weight α.
+For transmission, the natural language description X is
+divided into L frames, each of which is encoded as a
+binary sequence by source coding and channel coding. Let
+{b1, b2, · · · , bL} represent the encoded binary sequence of L
+frames. These frames are then transmitted over the network.
+It is worth mentioning that in order to optimize transmission,
+we prioritize semantically important information.
+During transmission, the encoded frames {b1, b2, · · · , bL}
+may have errors or be lost. The receiver uses a semantic
+error correction mechanism based on a large language model
+(LLM) to recover the lost frames, ensuring that the trans-
+mitted semantic information is preserved. The mathematical
+expression of semantic error correction is:
+˜X = fθ( ˆX),
+(2)
+where ˆX and ˜X are the natural language representation after
+transmission and the natural language representation after
+semantic error correction, respectively. fθ(·) is the semantic
+error correction function, parameterized by θ.
+After obtaining the corrected natural language description
+˜X, it will be passed to the final receiver. The receiver may
+be a visually impaired individual who receives information
+through acoustic channels. Alternatively, the receiver could
+be a generative AI model with natural language representa-
+tion as text prompt. This process can be formalized as:
+ˆS = fβ( ˜X),
+(3)
+where ˆS represents the generated speech, image, or other
+formats of content. fβ(·) denotes speech generation model,
+generative AI model, or some other model, and β represents
+its parameters.
+B. PROBLEM DESCRIPTION
+In ULSC system, raw visual data is first transformed into a
+series of natural language descriptions. These descriptions
+are then divided into multiple data frames for encoding and
+preparation for transmission. However, in the process of net-
+work transmission, these encoded frames may be wrong or
+lost due to various factors such as noise interference and
+signal attenuation. To address this challenge, we employ
+semantic error correction techniques on the receiving end
+to recover lost or damaged frames as much as possible,
+thereby maximizing the retention of transmitted semantic
+information.
+234
+VOLUME 3, 2025
+ S ∈ R^n  --> X ∈ Z^d
+
+
+=== PAGE 4 ===
+Guo et al.: SIAC With Semantic Correction Using Large Language Models
+The goal of this system is to minimize the overall semantic
+information loss during transmission. This means that we
+not only focus on the integrity of each data frame, we also
+want to optimize the delivery of critical information with
+limited resources. In subsequent chapters, we will detail how
+to implement these theories in practical applications and ver-
+ify the effectiveness of these strategies through experiments.
+This includes data preprocessing technology on the sending
+side, semantic communication strategy in the network, and
+semantic recovery mechanism on the receiving side.
+III. TEXTUAL ENCODER AND FRAME IMPORTANCE
+QUANTIFICATION
+This section delves into the intricacies of the textual encoder
+within the visual data-to-text conversion process and the
+methodology for quantifying frame importance, which are
+fundamental components of the ULSC transmitters.
+A. VISUAL DATA TO NATURAL LANGUAGE CONVERSION
+The primary objective of ULSC is to facilitate the compre-
+hension of visual data for visually impaired individuals or
+generative AI systems by utilizing expansive human knowl-
+edge bases. The transformation of visual data into natural
+language is a critical and intricate process within ULSC,
+encompassing aspects of computer vision (CV) and natural
+language processing (NLP). This complex process, referred
+to as image captioning in the field of deep learning, requires
+a deep understanding of visual content to generate accurate
+and meaningful descriptions.
+Significant advancements have been made in addressing
+this challenge. Notable approaches include the encoder-
+decoder model, as demonstrated in works by Vinyals et al.
+[29] and Karpathy et al. [30]. These models employ convo-
+lutional neural networks (CNNs) to extract image features
+and recurrent neural networks (RNNs) or long short-term
+memory (LSTM) networks to generate corresponding textual
+descriptions. To enhance the accuracy and relevance of these
+descriptions, an attention mechanism has been integrated into
+the encoder-decoder framework. This mechanism allows the
+model to focus on different segments of the image during the
+generation process, as detailed in the studies by Xu et al. [31]
+and Li et al. [32].
+Building on these advancements, our research has adopted
+the pre-trained ICNN proposed by Li et al. [32]. Fig. 2(a)
+shows the workflow of the ICNN. The input image is
+divided into a number of small blocks, which are con-
+verted into a high-dimensional feature representation after
+passing through the image encoder. These image feature vec-
+tors are then passed to an image-based text decoder, which
+generates a text description related to the image content.
+Fig. 2(b) shows the structure of the image encoder and
+image-grounded text decoder in detail. The image encoder
+consists of N Transformer layers. Each Transformer layer
+includes a Self-Attention layer, Feed Forward network, and
+LayerNorm. These layers extract image features by Self-
+Attention mechanism, and further process them by Feed
+FIGURE 2. The adopted pre-trained ICNN and its details.
+Forward network, and finally generate image feature vectors.
+In image-grounded text decoder, each Transformer layer also
+contains LayerNorm, Feed Forward network, and Causal
+Self-Attention layer. In addition, a Cross Attention layer is
+added, which is used to combine image features and text
+information to generate text descriptions related to the image
+content.
+Notably, the generated text’s length is adjusted according
+to the complexity of the image. For simpler images, the text
+generated will be shorter, while for more complex images
+with richer semantic content, the text length increases accord-
+ingly. This dynamic text generation mechanism ensures that
+the description is neither too long nor too short. The image
+encoder also analyzes the image’s complexity by evaluating
+various aspects such as the number of objects, scene diversity,
+and the relationships among visual elements. The encoder
+generates feature vectors that inform the text decoder about
+these aspects, enabling the system to prioritize semantically
+important elements in the image. For example, when pro-
+cessing an image with multiple objects or scenes, the model
+identifies and emphasizes key objects and their interactions,
+and generates text that reflects these important elements.
+Further details of the model and its implementation can be
+found in [32].
+In traditional communication systems, there is a risk
+of visual privacy disclosure when transmitting raw images
+or low-level features. An attacker can use methods such
+as model inversion [7] to reconstruct the original image
+(e.g., facial image), and then obtain the user’s skin color
+VOLUME 3, 2025
+235
+Reason 
+for how 
+to 
+dynamic
+ally text 
+length 
+generate
+
+
+=== PAGE 5 ===
+TABLE 1. The importance of each word in example sentences with and without semantic error correction.
+information, or directly use it for facial recognition. Our
+approach converts visual information into natural language
+descriptions. This description preserves only the most crit-
+ical information in the image for semantic understanding,
+filtering out details that are not relevant to the original pixel-
+level features. This transformation increases the difficulty
+of countering model inversion attacks because there are
+significant differences in feature space between the natu-
+ral language description and the original image, reducing
+the likelihood of the attacker recovering the original visual
+information.
+B. FRAME IMPORTANCE QUANTIFICATION
+The concept of frame importance is pivotal in semantic
+importance-aware communications. It pertains to the rel-
+evance and significance of data within a frame for the
+comprehensive understanding of the overall context. Due to
+its content-dependent and dynamic nature, the quantification
+of semantic importance is intricate and often requires deep
+contextual understanding and domain-specific knowledge.
+Establishing universal metrics for this quantification is chal-
+lenging, as it may vary across different contexts.
+In our approach, we amalgamate human judgment with
+automated methods, including natural language processing
+techniques, machine learning algorithms, and user feedback,
+to quantify the semantic importance of data within frames.
+This multifaceted approach is a subject of ongoing research.
+Specifically, we utilize pre-trained language models, such as
+ChatGPT [33] and BERT [34], to measure the importance of
+words and frames based on the semantic variations resulting
+from their erasure, as detailed in [18].
+Our method involves comparing the original message,
+denoted as m0, with a modified version, ml, where the lth
+frame is absent but replaced with a completion frame gener-
+ated by a LLM. The semantic importance of the lth frame is
+then quantified as:
+Fl = 1 −φ(m0, ml),
+(4)
+where φ (m0, ml) =
+Bψ(m0)T Bψ(ml)
+∥Bψ(m0)∥·∥Bψ(ml)∥measures the seman-
+tic similarity between m0 and ml. This similarity is calculated
+using the cosine similarity of the embeddings generated
+by a pre-trained BERT model, Bψ(·), for both messages.
+This approach ensures that the quantification of importance
+reflects the ability of semantic error correction mechanisms
+to recover or predict missing information.
+Notably, this method allows the transmitter to indepen-
+dently assess the importance of words or frames without
+requiring interaction with the receiver. By simulating a
+semantic error corrector, the transmitter can determine the
+potential for each word or frame to be accurately recon-
+structed or predicted by the receiver’s error correction
+system.
+Table 1 presents a comparative analysis between our pro-
+posed method, which includes semantic error correction, and
+the previously discussed method that does not incorporate
+this aspect (as detailed in [18]). A striking observation from
+this comparison is the prevalence of zero importance scores
+for most words in the context of semantic error correction.
+This outcome indicates that many words, when lost, can be
+effectively predicted and completed by the receiver’s error
+correction mechanisms. Consequently, the ULSC framework
+can prioritize transmitting words or frames that are less likely
+to be accurately reconstructed if lost, thereby enhancing com-
+munication efficiency and reliability.
+This approach represents a significant advancement
+in the field of semantic communications, particularly
+in applications involving ULSC, as it provides a more
+nuanced understanding of data importance and optimizes
+data transmission based on the receiver’s error correction
+capabilities.
+IV. SEMANTIC IMPORTANCE AWARE
+COMMUNICATIONS OVER NETWORKS
+The concept of semantic importance-aware communications
+centers around the prioritization of semantically significant
+frames during transmission. This approach is instrumental in
+optimizing data traffic management and ensuring that vital
+information is accorded the utmost priority. Such prioriti-
+zation is crucial in minimizing delays and augmenting the
+overall efficiency of the system. In this framework, frames
+of greater semantic importance are transmitted or processed
+in precedence to those of lesser significance.
+Semantic importance-aware communications exhibit ver-
+satility across multiple layers. At the foundational physical
+layer, diverse modulation and coding schemes are employed
+236
+VOLUME 3, 2025
+Research 
+part
+measure the semantic 
+similarity btw. original 
+and modified by LLM 
+using Cosine Similarity
+that cosine similarity of Embedding, which is 
+generated by pre-trained BERT model, B(.) 
+for both msg, original and corrected by LLM
+independently assess the 
+importance of words or 
+frames without waiting for 
+feedback from the receiver.
+Semantic Importance Formula 
+using original and modified msg, 
+SIAC work on 
+various layer
+foundational Physical layer, diverse modulation 
+and coding schemes use and apply on trans. data
+to define various level of importance
+
+
+=== PAGE 6 ===
+Guo et al.: SIAC With Semantic Correction Using Large Language Models
+to transmit data of varying levels of importance. For exam-
+ple, data of higher importance might be encoded using
+more robust error-correcting codes or transmitted using
+lower-order modulation to enhance reliability.
+In specific physical layer technologies, such as cellular
+systems, there exists the capability for dynamic allocation
+of channels to frames based on their importance. Frames of
+higher importance may be allocated to channels experienc-
+ing less congestion. This strategy, situated at the physical
+layer, encompasses the retransmission of data in instances
+of errors or collisions during the initial transmission. In sce-
+narios where significant data encounters errors, it may be
+retransmitted with elevated priority to assure a more reliable
+delivery.
+Furthermore, power control mechanisms within wireless
+communication can allocate preferential treatment to certain
+frames by modulating their transmit power. This adjustment
+ensures that frames of higher importance receive better signal
+quality and encounter reduced interference.
+It is imperative to recognize that while some of these
+methodologies are implemented directly within the physical
+layer, many communication systems integrate both physical
+layer and higher-layer techniques, such as importance-aware
+routing and access control, to realize efficient and reliable
+semantic communication.
+To elucidate semantic importance-aware communication
+and its integration with existing communication frameworks,
+we examine the semantic importance-aware adaptive modula-
+tion and coding selection (MCS) as a representative example.
+In this model, transmitted messages are divided into a total
+of L frames, each capable of carrying a payload of Al bits,
+inclusive of both header and data (bl). This semantic com-
+munication system deviates from traditional systems that
+predominantly focus on the accuracy of transmitted bits or
+symbols. Instead, it emphasizes the paramount objective of
+enabling the receiver to accurately comprehend and extract
+the intended information relayed by the transmitter. In this
+context, traditional metrics such as bit/symbol/frame error or
+loss probability are insufficient as evaluation criteria. Instead,
+we advocate for the adoption of semantic loss as a metric to
+quantify the integrity of the information exchange between
+the transmitter and receiver.
+The expected semantic loss (SL) incurred by a frame loss is
+determined by the semantic importance of the messages con-
+tained within each frame (Fl), combined with the frame loss
+probabilities (PLoss
+l,frame). It is essential to acknowledge that,
+in the sphere of semantic communications, each frame con-
+veys unique messages, imparting varying degrees of semantic
+significance. This variation in importance amongst frames,
+often overlooked in conventional data-oriented communi-
+cation systems, is of paramount importance in semantic
+communications. Notably, the omission or inaccuracy of
+messages bearing critical information can lead to a dis-
+proportionately high semantic loss. Therefore, the expected
+semantic loss due to frame loss is characterized by the inte-
+gration of the semantic importance of the messages and their
+corresponding loss probabilities as
+SL =
+L
+X
+l=1
+FlPLoss
+l,frame.
+(5)
+The frame loss probability hinges upon the MCS and the
+channel status. Let PCorrect
+l,frame denote the successful reception
+and recovery of the lth frame and we have
+PLoss
+l,frame = 1 −PCorrect
+l,frame .
+(6)
+The correct probability can be derived as
+PCorrect
+l,frame = (PCorrect
+l,bolck )NB.
+(7)
+where PCorrect
+l,bolck is the correct probability of coding block.
+NB = ⌈Al/(RlBl)⌉is the number of coding blocks per frame,
+where Rl is the coding rate, Bl is the coding block length.
+PCorrect
+l,block =
+Cl
+X
+i=0
+Bl
+i
+
+PError
+l,bit (Ml, γ )i 
+1 −PError
+l,bit (Ml, γ )
+Bl−i
+, (8)
+where Cl denotes the number of corrigible errors and it is
+determined by the choosing coding scheme. In general, Cl =
+⌊dl,min−1
+2
+⌋, where dl,min represents the minimum number of
+bit positions by which any two distinct codewords differ.
+PError
+l,bit (Ml, γ ) is the bit error probability determined by the
+symbol error probability PError
+l,sym (Ml, γ ), and the adopted
+bit-to-symbol mapping scheme. It can be approximated accu-
+rately as PError
+l,bit (Ml, γ ) ≃
+PError
+l,sym(Ml,γ )
+log2 Ml
+in high SNR region
+in case of Gray mapping, where Ml denotes the modula-
+tion order for the adopted Ml modulation scheme. γ
+=
+|h|2EbRl log Ml/N0 represents the SNR, where h is the chan-
+nel coefficient, Eb stands for power per bit, and N0 denotes
+the noise power. The SEP of typical modulation schemes has
+been summarized in Table 2.
+Therefore, based on the derived symbol error probability,
+we can obtain the expression of the frame loss probability as
+PLoss
+l,frame = 1 −
+" Cl
+X
+i=0
+Al
+i
+ Pl,sym (Ml, γ )
+log2 Ml
+i
+×
+
+1 −Pl,sym (Ml, γ )
+log2 Ml
+Al−i#NB
+.
+(9)
+Substituting (4) and (9) into (5) yields
+SL =
+L
+X
+l=1
+ 
+1 −
+Bψ
+ ml,t
+T Bψ
+ ml,r
+
+Bψ
+ ml,t
+ ·
+Bψ
+ ml,r
+
+! (
+1 −
+" Cl
+X
+i=0
+Al
+i
+
+×
+Pl,sym (Ml, γ )
+log2 Ml
+i 
+1 −Pl,sym (Ml, γ )
+log2 Ml
+Al−i#NB
+
+.
+(10)
+To ensure that the semantic communication system meets
+its latency requirements, it is imperative to assess the overall
+VOLUME 3, 2025
+237
+power 
+control 
+mechanism
+physical 
+layer
+traditional 
+metrics are 
+insufficient 
+for frame 
+error or 
+loss 
+probability
+frame loss prob.
+semantic loss
+correction probability
+
+
+=== PAGE 7 ===
+TABLE 2. SEP of various modulation schemes.
+transmission time for the conveyed messages. Assuming a
+transmission rate of Rs in symbols/seconds for the semantic
+system under consideration, the transmission time for the l-th
+frame can be determined as
+Tl =
+Al
+log2 (Ml) RlRs
+.
+(11)
+Consequently, the total transmission delay can be evaluated
+as
+T =
+L
+X
+l=1
+Tl =
+L
+X
+l=1
+Al
+log2 (Ml) RlRs
+.
+(12)
+Let Ml be the modulation scheme chosen from a modula-
+tion candidate Mall for the transmission of the lth frame. Let
+Cl be the coding scheme chosen from a coding candidate Call
+for the transmission of the lth frame. The modulation scheme
+Ml will determine the symbol error rate (i.e., Pl,sym (Ml))
+and the number of bits per symbol (i.e., log(Ml)). The coding
+scheme Cl will determine error-correcting capabilities (i.e.,
+Cl) and code rates (i.e., Rl). Both of them are key factors that
+dominate the semantic loss and transmission delay. Aiming
+at minimizing the semantic loss within a transmission delay
+constraint, we formulate the semantic-aware adaptive modu-
+lation and coding problem as
+min SL
+s.t. : T ≤Tth,
+Ml ∈Mall,
+Cl ∈Call.
+(13)
+The problem delineated in (13) is inherently a discrete
+optimization problem. To determine the optimal solution,
+one could theoretically conduct an exhaustive search of
+all possible solutions. This approach, however, escalates in
+computational complexity exponentially with the number of
+frames, following the formula O(|Mall|L|Call|LC1), where
+C1 signifies the complexity of computing SL and T for each
+modulation and coding combination.
+In order to alleviate the computational burden of this
+method, we propose a semantic-aware greedy search method.
+We randomly generate many feasible modulation and cod-
+ing candidates and output the one with minimum semantic
+loss and acceptable transmission delay below the threshold.
+By applying such greedy search method, the computational
+complexity is significantly reduced to O (NsetLC1), where
+Nset is the number of candidates the algorithm searches. This
+method provides a more computationally efficient approach,
+striking a balance between achieving near-optimal solutions
+and adhering to constraints of semantic importance and trans-
+mission delay.
+V. SEMANTIC CORRECTION AND VISUAL DATA
+GENERATION
+The process of receiving semantically important signal rep-
+resentations, which are detected as bits, involves error
+correction for rectifiable errors, while uncorrectable frames
+are discarded. This study proposes a novel approach that
+leverages a LLM for word completion in scenarios where
+frames are lost.
+A. SEMANTIC CORRECTION METHODOLOGY
+Despite efforts to prioritize the transmission of semanti-
+cally significant frames and quantify their importance, the
+reliability of information transmission cannot be guaran-
+teed due to unpredictable factors such as wireless channel
+fading and noise interference. These factors can distort or
+result in the loss of information during transmission. In the
+ULSC process, the intermediate state is the natural language
+description. If this is not transmitted reliably, it can hin-
+der the receiver’s understanding and decision-making. This
+issue is particularly critical in applications involving visu-
+ally impaired individuals, where misunderstandings or delays
+could compromise personal safety. Therefore, addressing the
+challenge of completing missing frames in received natural
+language descriptions is crucial for ensuring reliable semantic
+communication.
+To tackle this challenge, this study proposes the use of a
+pre-trained LLM, such as BERT, which leverages contextual
+information and pre-training knowledge to infer and recover
+missing frames. The specific steps of this process are outlined
+as follows. First, the input sentences are preprocessed to fit
+the BERT model. Suppose we have a sentence: ‘‘A beach with
+palm [MASK] and clear blue water.’’, where [MASK] indi-
+cates the missing word. Using BERT’s tokenizer, the sentence
+is tokenized and special tokens [CLS] and [SEP] are added to
+denote the start and end of the sentence, respectively. Next,
+the segmented sentence is converted into the corresponding
+ID in the vocabulary, which is used as input to the model.
+In addition, to accommodate the input format of BERT, these
+IDs need to be converted into tensor form. The preprocessed
+input data is fed into the BERT model. The BERT model
+consists of multiple Transformer layers, each of which is
+processed by Self-Attention mechanisms and Feed Forward
+Network. Among them, the mathematical expression of the
+Self-Attention mechanism is:
+Attention(Q, K, V) = softmax
+QK T
+√dk
+
+V.
+(14)
+238
+VOLUME 3, 2025
+
+
+=== PAGE 8 ===
+Guo et al.: SIAC With Semantic Correction Using Large Language Models
+Q, K and V are query, key and value matrices respectively,
+and dk is the dimension of the key vector. In BERT, each
+word representation interacts with other word representations
+through this mechanism to capture global information in the
+sentence. After passing the last layer of BERT, a contextual
+representation of each word can be obtained. Suppose the
+output is represented as a matrix 5 with the shape (L5,
+D5), where L5 is the length of the sentence and D5 is the
+dimension of the representation. It can be expressed as:
+5 =
+
+π[CLS], π[A], · · · , π[MASK], · · · , π[water], π[SEP]
+
+.
+(15)
+Next, the representation at position is extracted, and it is trans-
+formed into a probability distribution over the vocabulary
+through a fully connected layer and a softmax layer:
+P(w|context) = softmax(π[MASK]W + b),
+(16)
+where W and b are trainable weights and bias parameters,
+and P(w|context) is the probability distribution of each word
+in the vocabulary. Finally, the word corresponding to the
+maximum value in the probability distribution is selected as
+the prediction result:
+ˆw = argmaxwP(w|context).
+(17)
+By aligning the correction mechanism with human cognitive
+processes, this approach ensures a more reliable transmis-
+sion of semantic information, thereby enhancing the overall
+effectiveness of communication systems, especially in critical
+applications.
+B. VISUAL DATA GENERATION
+Visual data generation is a pivotal component in enabling
+smart agents to interpret semantics and contextual nuances in
+received text. This process is achieved through sophisticated
+neural network models that transform textual descriptions
+into corresponding visual representations, such as images.
+Achieving a harmonious and logical alignment between the
+generated images and their textual counterparts is a challeng-
+ing endeavor due to the inherent ambiguity in correlating
+images with natural language expressions and the necessity
+to maintain a high level of image realism.
+Prominent developments in this field include OpenAI’s
+DALL-E model [35] and Google’s Imagen model [36], both
+designed for text-to-image generation. A notable limitation
+in these models is their computational efficiency, primarily
+because they function in pixel space. To manage computa-
+tional constraints, these models initially produce images of
+64×64 resolution, which are subsequently upscaled to 256×
+256 and finally to 1024 × 1024, utilizing super-resolution
+techniques. A significant advancement is presented in [37],
+which introduced the Stable Diffusion model. The core idea
+is to start from the pure noise image and gradually recover to
+the target image through a series of reverse diffusion steps.
+Its operation in latent space offers enhanced computational
+FIGURE 3. Visual data generation.
+efficiency, making it a superior choice for integration into the
+ULSC system.
+The image generation process of the Stable Diffusion
+model is illustrated in Fig.3. First, the user inputs a text
+prompt, such as ‘‘a beach with palm trees and clear blue
+water’’. This text prompt is processed through a pre-trained
+CLIP text encoder, generating the corresponding text embed-
+dings. The CLIP text encoder converts the text into a
+multi-dimensional vector that effectively captures the seman-
+tic information of the text. Meanwhile, an initial noise seed is
+sampled from a standard Gaussian distribution. These noise
+seeds serve as the initial input for the latent representa-
+tion. The noise seeds are represented as a multi-dimensional
+matrix of a specific size, forming the starting point of the
+image generation process. Next, the noise seeds and text
+embeddings are fed into the noise predictor, which uses a
+U-Net model [38]. The U-Net model is a convolutional neural
+network capable of denoising while preserving crucial details
+in the image. At each timestep, the U-Net model predicts
+and removes noise based on the current latent representa-
+tion and text embeddings, gradually generating a new latent
+representation. This process involves multiple iterative steps,
+with each step progressively removing some noise, trans-
+forming the latent representation from pure noise to a form
+closer to the target image. Throughout the denoising process,
+the text embeddings provide guidance for image generation,
+ensuring that the generated image aligns with the input text
+prompt. After completing all the denoising steps, the final
+latent representation is decoded through a VAE decoder,
+producing the final high-quality image. The VAE decoder
+converts the denoised latent representation into a complete
+image, significantly enhancing the detail and quality of the
+image, which matches the initial text prompt. Through this
+process, the Stable Diffusion model can start from random
+noise, incorporate the input text prompt, and gradually gen-
+erate a high-quality image that corresponds to the description.
+VOLUME 3, 2025
+239
+
+
+=== PAGE 9 ===
+This process fully leverages the powerful features of pre-
+trained models, particularly the CLIP text encoder and the
+U-Net denoising network, ultimately achieving an efficient
+transformation from text to image.
+VI. EXPERIMENTS AND DISCUSSIONS
+In this section, we will demonstrate the advantage of seman-
+tic importance-aware communications through experiments
+and that of using LLM to assist semantic error correc-
+tion. In particular, adaptive modulation and coding that is
+compatible with existing communication systems. Besides,
+we also demonstrate the advantage of ULSC compared to
+feature-based semantic communication in achieving high
+semantic similarity and protecting privacy.
+A. EXPERIMENTAL SETUP
+1) DATASETS AND PRE-TRAINED MODELS
+We
+collected
+a
+comprehensive
+dataset
+comprising
+1000 images sourced from the Internet, aimed at validating
+the effectiveness of our newly proposed method. This dataset
+comprises landscapes, animals, people, cartoons, and vari-
+ous other image categories. The resolution of each image
+is 256 × 256. Additionally, in our experiments, we select
+two deep learning-based algorithms for comparison. These
+algorithms require extensive training on large-scale dataset.
+To ensure excellent algorithm performance, we train these
+algorithms using the ImageNet dataset [39]. ImageNet is a
+large-scale image dataset covering over 1, 000 categories,
+ranging from animals to household items and various other
+categories. These images are not only diverse but also include
+objects from different angles and in various environments,
+making it an ideal dataset for training deep learning models.
+In our experiments, we adjust the resolution of each ImageNet
+image to 256 × 256.
+For our experiments, we utilize pre-trained models for
+different components of the ULSC system. Image caption
+neural networks for converting visual data into natural lan-
+guage descriptions are based on a model developed [32].
+To evaluate the importance of semantic frames, we adopt
+BERT as our language model, specifically using the bert-
+base-uncased version from the Hugging Face Transformers
+library. The semantic error correction module uses the same
+BERT model. When visual data needs to be regenerated
+from natural language descriptions, we use a Stable Diffusion
+model. All the relevant code and detailed documentation for
+invoking the pre-trained model can be found on GitHub.1
+2) BASELINES
+To verify the effectiveness of our proposed system, we com-
+pare it with two semantic communication schemes, including
+DeepJSCC [10] and SCDA [40].
+• DeepJSCC: In DeepJSCC, CNNs are used to encode
+source images into a compact representation that is
+transmitted directly over a communication channel. The
+1https://github.com/SSG2019/ULSC
+receiver uses another CNNs to decode the received sig-
+nal back to the original image.
+• SCDA: SCDA is a new semantic communication system
+based on deep learning, which can process dynamic
+datasets without knowing the specific task of the
+receiver.
+To more fully demonstrate the robustness and adaptability of
+our proposed system, we consider two channels: the frame
+erase channel and the AWGN channel. In particular, in the
+frame erase channel test, we consider two different data
+packaging strategies of DeepJSCC and SCDA systems when
+transmitting features. The first strategy is to package all fea-
+tures into 7 frames, and the other strategy is to package them
+into 14 frames. This is because the natural language generated
+from images in the proposed method contains a maximum of
+14 words and a minimum of 7 words.
+3) METRICS
+In this paper, we focus on semantic similarities between
+transmitted and recovered semantic understanding. The com-
+monly used peak signal-to-noise ratio (PSNR) mainly mea-
+sures the difference of images at the pixel level, focusing on
+the average error between the original image and the recon-
+structed image. An image that scores high on the PSNR may
+not necessarily be visually closer to the original image. This
+is mentioned ‘‘semantic gap’’, namely the image pixel level is
+similar, but there were significant differences in content and
+semantics. In this paper, we propose to calculate the image
+similarity between the original image S and the generated
+image ˆS to evaluate the performance of the algorithm.
+Image Similarity(S, ˆS) =
+C8(S) · C8(ˆS)
+∥C8(S)∥∥C8(ˆS)∥
+,
+(18)
+where C8(S) represents the embedding vector of the image S
+obtained through the pre-trained CLIP model C8. The dimen-
+sionality of C8(S) depends on the size of the embedding
+layer in the CLIP model, which is 512 in this paper. Each
+component of the embedding vector is a real number ranging
+from [−1, 1]. The image similarity defined in (18) is a value
+between 0 and 1, indicating the degree of semantic similarity
+between the generated image and the original image, where
+1 indicates the highest similarity and 0 indicates no similarity.
+Besides, we focus on addressing a significant privacy con-
+cern in machine learning: model inversion attack. To validate
+the effectiveness of the proposed method, we designed exper-
+iments. Specifically, for DeepJSCC and SCDA, we train a
+decoder to reconstruct the original image based on illegally
+obtained features. For our proposed method, we simulate
+an attacker who, after stealing the signal, uses the same
+generative model to produce visual data. By comparing the
+differences between the images reconstructed by the simu-
+lated attacker and the original image, we evaluate the privacy
+protection capability of each method.
+240
+VOLUME 3, 2025
+
+
+=== PAGE 10 ===
+Guo et al.: SIAC With Semantic Correction Using Large Language Models
+FIGURE 4. Semantic loss of different transmission strategies.
+We use Peak Signal-to-Noise Ratio (PSNR) as a metric to
+quantify this difference, with the following expression:
+Attacker-PSNR = 10 log10
+MAX2
+MSE
+(dB),
+(19)
+where MSE = d(S, ˆS) is the mean squared-error between
+the original image S and the generated image ˆS, and MAX is
+the maximum value of the image pixels. The images we used
+are 24-bit depth RGB images with each color channel having
+8 bits per pixel, so MAX = 28 −1 = 255. The smaller the
+PSNR, the greater the difference, and the stronger the privacy
+protection ability.
+B. SUPERIORITY OF SEMANTIC-AWARE ADAPTIVE
+MODULATION AND CODING
+The modulation scheme is selected from the set Mall =
+{BPSK, QPSK, 16QAM, 64QAM, 256QAM}. The channel
+coding schemes is chosen from Call
+=
+{(2k, k, 2k−1)
+Hadamard codes|k = 3, 4, 5, 6} with block length Bl = 2k,
+code rate Rl = k/2k and minimum distance dl,min = 2k−1.
+It is worth noting that Hadamard codes are chosen as it has
+closed-form expressions of block length, coding rate, and
+minimum codeword distance. The proposed AMC can also
+be extended to selecting other MCS. The frame header is
+assumed to be 10 Bytes. In the experiment, we investigate two
+packeting solutions, one packing one word in a packet, and
+the other packing two words in a packet. The delay threshold
+is set to 1 ms and 2 ms for transmitting all packets for the
+above two cases, respectively. The MCS candidate set size
+Nset is set to 1000. The experiment results are illustrated in
+Figs. 4 and 5, respectively. It is showed that in both exper-
+iment setups, the semantic-aware communication scheme
+considerably outperforms conventional communication with-
+out semantic awareness. With the assistance of LLM at the
+receiver for semantic error correction, the semantic loss can
+be greatly reduced, reflecting the effectiveness of LLM for
+communication performance improvement. The performance
+gain in a word in each packet is more significant as in this
+FIGURE 5. Semantic loss of different transmission strategies.
+FIGURE 6. Semantic loss of different semantic awareness
+strategies.
+case, the LLM can handle one word missing compared to two
+words missing.
+Next, we further verify the validity of the proposed strategy
+for quantifying semantic importance. Specifically, we choose
+to compare with the TF-IDF scheme. TF-IDF is a com-
+monly used weighting technique for information retrieval
+and text mining. The TF-IDF helps to assess how impor-
+tant a word is to a text. Fig. 6 shows the semantic loss of
+the communication scheme without semantic awareness, the
+communication scheme with TF-IDF semantic awareness,
+and our proposed scheme. It can be seen that our proposed
+scheme achieves lower semantic loss, while TF-IDF achieves
+the highest semantic loss, because TF-IDF relies on word fre-
+quency to determine importance and fails to capture semantic
+information.
+C. COMPARISON TO BASELINES OVER THE FRAME
+ERASE CHANNEL
+1) PERFORMANCE COMPARISON
+In this subsection, we evaluate the performance of the pro-
+posed method and the baselines at frame erase channel, that
+VOLUME 3, 2025
+241
+
+
+=== PAGE 11 ===
+FIGURE 7. Image similarity of different methods versus frame erase rate.
+FIGURE 8. Attacker-PSNR of different methods versus frame erase rate.
+is, semantic similarities between transmitted and recovered
+semantic understanding. For all baselines, we set them to train
+at the frame erase rates of 0 and 0.01, respectively, and then
+test them at the frame erase rates of 0.001, 0.004, 0.007, 0.01,
+0.04, 0.07, and 0.1.
+Fig. 7 shows the image similarity of all methods versus
+frame erase rate. In Fig. 7(a), the transmitted features of base-
+lines are packaged into 7 frames. It can be seen that there are
+significant differences in image similarity between different
+methods at different frame erasure rates. When the frame
+erasure rate is low (e.g. 0.001 to 0.01), the image similarity of
+DeepJSCC (Training at 0.01) remains around 0.72 and that of
+SCDA (Training at 0.01) remains around 0.76. As the frame
+erasure rate increases, the image similarity decreases slightly,
+but the overall image remains relatively stable. In contrast,
+at low frame erase rates (e.g. 0.001 to 0.01), the image simi-
+larity of DeepJSCC (Training at 0) remains around 0.78 and
+that of SCDA (Training at 0) remains around 0.80, but their
+image similarity decreases significantly when the frame erase
+rate reaches 0.1, demonstrating sensitivity to high frame
+erasure rates. In Fig. 7(b), the transmitted features of base-
+lines are packaged into 14 frames. DeepJSCC and SCDA
+perform slightly better in most cases, however, with the
+increase of frame erase rate, their image similarity decreases
+rapidly, especially under the frame erase rate of 0.1. In con-
+trast, our proposed method exhibits the best image similarity
+at all frame erase rates. On a scale of 0.001 to 0.1, image
+similarity remains between 0.82 and 0.84. Even at a high
+frame erase rate of 0.1, the image similarity of our proposed
+method is much higher than that of all baselines. On the
+whole, our proposed method is significantly better than the
+baselines in each frame erase rate, showing better robustness
+and stability.
+2) VALIDATION OF VISUAL PRIVACY PROTECTION
+CAPABILITIES
+To verify the advantages of the proposed method in pro-
+tecting privacy, we conduct model inversion attacks on
+the proposed method and all baseline methods. In Fig. 8,
+we show the Attacker-PSNR versus frame erase rate. We can
+242
+VOLUME 3, 2025
+
+
+=== PAGE 12 ===
+Guo et al.: SIAC With Semantic Correction Using Large Language Models
+FIGURE 9. From left to right are the original image, and the images obtained by model inversion attacks on DeepJSCC with 7 Frames
+(Training at 0.01), DeepJSCC with 7 Frames (Training at 0), SCDA with 7 Frames (Training at 0.01), SCDA with 7 Frames (Training at
+0), and the proposed method. For each reconstructed image in evaluation, the frame erase rate is set to 0.001.
+FIGURE 10. Performance comparison versus SNR on the AWGN
+channel.
+observe that different methods have significant differences
+in Attacker-PSNR under different frame erase rates. Specifi-
+cally, in Fig. 8(a), for DeepJSCC and SCDA trained at a frame
+erase rate of 0.01, at low frame erase rates (e.g. 0.001 to
+0.01), DeepJSCC’s Attacker-PSNR stays around 16.8 and
+SCDA’s Attacker-PSNR stays around 17.8, and they change
+little. As the frame erase rate increases, their Attacker-PSNR
+slightly decreases. For DeepJSCC and SCDA trained at a
+0 frame erase rate, the Attacker-PSNR drops faster as the
+frame erase rate increases. In contrast, our proposed method
+has significantly lower Attacker-PSNR at all frame erase rates
+than the baseline methods, with Attacker-PSNR remaining
+between 8.5 and 9 in the range of 0.001 to 0.1. This shows that
+our proposed method makes it difficult for attackers to obtain
+high-quality images regardless of how frame erase rates vary.
+Fig. 8(b) shows the same tendency.
+To more intuitively demonstrate the privacy benefits of our
+proposed approach, we present images obtained by adver-
+saries using model inversion, as shown in Fig. 9. We can see
+that the image obtained by attacking the baseline method is
+the same person as the original image, although there is some
+blur and noise. Although the image obtained by attacking
+the proposed method is clear, it can be clearly seen that
+it is different from the person in the original image. This
+effectively protects the user’s visual privacy, indicating the
+advantages of the proposed method.
+D. COMPARISON TO BASELINES OVER THE AWGN
+CHANNEL
+To more fully demonstrate the robustness and adaptability
+of our proposed system, we also conduct tests on AWGN
+channel. The test results are shown in Fig. 10. Fig. 10(a)
+shows the performance of DeepJSCC, SCDA and our pro-
+posed method in terms of Image Similarity under different
+SNR regimes. It can be seen from the figure that the proposed
+method obtains the highest image similarity value under both
+low and high SNR regimes, which indicates that the proposed
+method can reliably transmit semantics even under noise
+interference environments. Fig. 10(b) shows the performance
+of different methods in terms of visual privacy protection
+under the same conditions. Our proposed method achieves the
+lowest Attacker-PSNR in all SNR tested, which indicates that
+the method has significant advantages in protecting users’
+visual privacy.
+VII. DISCUSSION
+By introducing LLMs, our proposed ULSC system makes
+significant progress in guaranteeing semantic transmission
+and enhancing visual privacy. Although the current research
+results are promising, there are still some key areas that
+deserve further exploration and optimization to further
+improve the performance and utility of the system.
+A. SEMANTIC IMPORTANCE EVALUATION
+In our current approach to semantic importance evaluation,
+we have primarily focused on individual word assess-
+ments. While this method has proven effective for many
+VOLUME 3, 2025
+243
+
+
+=== PAGE 13 ===
+applications, it falls short in capturing the contextual sig-
+nificance of phrases or word combinations. For example,
+in the sentence ‘‘A beach with palm trees and clear blue
+water’’, the individual words ‘‘palm’’ and ‘‘trees’’ may
+be undervalued due to their common co-occurrence. How-
+ever, when considered as the phrase ‘‘palm trees’’, they
+form a critical component of the scene’s description. This
+discrepancy reveals a key limitation in our method: the poten-
+tial omission of important semantic relationships between
+words.
+To overcome this limitation, we plan to explore seman-
+tic importance evaluation method based on image semantic
+segmentation [41]. For example, we consider an image that
+the text describes as ‘‘a beach with palm trees and clear
+blue water’’. Palm trees and other important elements in the
+images can be identified by semantic segmentation. If the
+segmentation results show that ‘‘palm trees’’ occupies a
+prominent position in the vision, then the system will improve
+the semantic importance of the phrase ‘‘palm trees’’ in the
+overall text description. This method not only captures key-
+words in the text, but also understands how these keywords
+combine with other visual elements to form a complete
+description of the scene. By integrating text and image, the
+semantic importance of each part of text can be determined
+more accurately, so as to improve the performance and effect
+of semantic communication system.
+B. SEMANTIC ERROR CORRECTION WITHOUT PRIOR
+KNOWLEDGE OF ERROR LOCATIONS
+In Section V, we introduced a BERT-based semantic error
+correction method that relies on the receiver knowing exactly
+where the data is lost. However, this assumption often fails
+in practical applications. To solve this problem, a new error
+correction mechanism can be introduced that does not require
+prior knowledge of the error location.
+Sequence number [42] and checksum [43] are two widely
+used techniques that can help identify missing or corrupted
+data frames during data transmission. Sequence number
+ensures sequential data by assigning a unique identifier to
+each packet. If the receiver detects a discontinuity in the
+sequence number, it can determine that the data frame has
+been lost. Checksum is hashed over the packet to generate a
+short checksum, which is then appended to the data frame.
+The receiver verifies the integrity of the data by recalculating
+the checksum of the received data frame and comparing it
+with the transmitted checksum.
+The new mechanism first uses sequence number to detect
+missing data frames. Once a data frame loss is detected, the
+system will enter error correction mode. In error correction
+mode, checksum is used to determine if the packet is corrupt.
+If the data frame is corrupted, the system will attempt to
+recover the lost data using a BERT-based semantic error
+correction method. By introducing sequence number and
+checksum, the system can perform efficient semantic error
+correction without knowing the location of the error. This
+improvement is expected to improve the practicability and
+robustness of the designed system and make it more suitable
+for practical communication environment.
+C. MODEL CUSTOMIZATION AND DEVELOPMENT
+In this paper, we utilize pre-trained models such as BERT
+and ChatGPT due to their established effectiveness in natu-
+ral language processing tasks. These models provide robust
+semantic understanding, which enhances the accuracy of our
+analysis and allows for efficient development [44]. Leverag-
+ing these mature technologies enables us to focus on the core
+innovations of our semantic communication framework.
+We recognize the importance of customizing these
+pre-trained models to better meet the specific needs of
+semantic communication tasks. Our future work will involve
+modifying model architectures and training processes to opti-
+mize the conversion of visual data into natural language
+descriptions. Additionally, we will design task-specific loss
+functions and evaluation metrics to further refine model per-
+formance. We also plan to fine-tune the models using relevant
+datasets and explore transfer learning strategies to enhance
+their adaptability to particular communication environments.
+These efforts aim to strengthen the overall effectiveness of
+our proposed system in addressing the challenges inherent in
+semantic communication.
+VIII. CONCLUSION
+In this study, we proposed an innovative approach for
+understanding-level semantic communications by integrat-
+ing semantic importance-aware communication (SIAC) with
+semantic correction using advanced LLMs such as BERT
+and ChatGPT. Our method aligns image communication
+within the human-comprehensible semantic space of nat-
+ural language, enabling effective semantic correction and
+significance analysis through LLMs. We developed a tech-
+nique to quantify the semantic value of data in each frame,
+supporting a semantically informed SIAC strategy. Addi-
+tionally, the research explores a semantic-aware adaptive
+modulation and coding scheme, complemented by a proposed
+low-complexity greedy search method to ensure semantically
+robust communications within set latency limits. The utiliza-
+tion of LLMs for filling in missing frames is also introduced.
+Experimental results validate the superiority of our approach
+in enhancing agent-human communications or generative
+task-oriented communications, particularly in terms of mini-
+mizing semantic loss and bolstering privacy protection.
+REFERENCES
+[1] S. Guo, Y. Wang, and P. Zhangz, ‘‘Signal shaping for semantic communi-
+cation systems with a few message candidates,’’ in Proc. IEEE 96th Veh.
+Technol. Conf. (VTC-Fall), London, U.K., Sep. 2022, pp. 1–5.
+[2] E. C. Strinati and S. Barbarossa, ‘‘6G networks: Beyond Shannon towards
+semantic and goal-oriented communications,’’ Comput. Netw., vol. 190,
+May 2021, Art. no. 107930.
+[3] Q. Lan et al., ‘‘What is semantic communication? A view on conveying
+meaning in the era of machine intelligence,’’ J. Commun. Inf. Netw., vol. 6,
+no. 4, pp. 336–371, 2021.
+[4] W. Tong and G. Y. Li, ‘‘Nine challenges in artificial intelligence and
+wireless communications for 6G,’’ IEEE Wireless Commun., vol. 29, no. 4,
+pp. 140–145, Aug. 2022.
+244
+VOLUME 3, 2025
+
+
+=== PAGE 14 ===
+Guo et al.: SIAC With Semantic Correction Using Large Language Models
+[5] D. Gündüz et al., ‘‘Beyond transmitting bits: Context, semantics, and task-
+oriented communications,’’ IEEE J. Sel. Areas Commun., vol. 41, no. 1,
+pp. 5–41, Jan. 2023.
+[6] J. Zhai, S. Zhang, J. Chen, and Q. He, ‘‘Autoencoder and its various
+variants,’’ in Proc. IEEE Int. Conf. Syst., Man, Cybern. (SMC), Miyazaki,
+Japan, Oct. 2018, pp. 415–419.
+[7] Y. Wang, S. Guo, Y. Deng, H. Zhang, and Y. Fang, ‘‘Privacy-preserving
+task-oriented semantic communications against model inversion attacks,’’
+IEEE Trans. Wireless Commun., vol. 23, no. 8, pp. 10150–10165,
+Aug. 2024.
+[8] D. P. Kingma and M. Welling, ‘‘Auto-encoding variational Bayes,’’ in
+Proc. Int. Conf. Learn. Represent. (ICLR), Banff, AB, Canada, Jan. 2014,
+pp. 368–377.
+[9] I. Goodfellow et al., ‘‘Generative adversarial nets,’’ in Proc. Adv. Neu-
+ral Inf. Process. Syst. (NeurIPS), Montreal, QC, Canada, Dec. 2014,
+pp. 2672–2680.
+[10] E. Bourtsoulatze, D. B. Kurka, and D. Gündüz, ‘‘Deep joint source-channel
+coding for wireless image transmission,’’ IEEE Trans. Cogn. Commun.
+Netw., vol. 5, no. 3, pp. 567–579, Sep. 2019.
+[11] M. Jankowski, D. Gündüz, and K. Mikolajczyk, ‘‘Wireless image retrieval
+at the edge,’’ IEEE J. Sel. Areas Commun., vol. 39, no. 1, pp. 89–100,
+Jan. 2021.
+[12] H. Xie, Z. Qin, G. Y. Li, and B.-H. Juang, ‘‘Deep learning enabled
+semantic communication systems,’’ IEEE Trans. Signal Process., vol. 69,
+pp. 2663–2675, 2021.
+[13] P. Jiang, C.-K. Wen, S. Jin, and G. Y. Li, ‘‘Deep source-channel coding
+for sentence semantic transmission with HARQ,’’ IEEE Trans. Commun.,
+vol. 70, no. 8, pp. 5225–5240, Aug. 2022.
+[14] Z. Weng and Z. Qin, ‘‘Semantic communication systems for speech trans-
+mission,’’ IEEE J. Sel. Areas Commun., vol. 39, no. 8, pp. 2434–2444,
+Aug. 2021.
+[15] T. Han, Q. Yang, Z. Shi, S. He, and Z. Zhang, ‘‘Semantic-preserved
+communication system for highly efficient speech transmission,’’ IEEE J.
+Sel. Areas Commun., vol. 41, no. 1, pp. 245–259, Jan. 2023.
+[16] P. Jiang, C.-K. Wen, S. Jin, and G. Y. Li, ‘‘Wireless semantic communica-
+tions for video conferencing,’’ IEEE J. Sel. Areas Commun., vol. 41, no. 1,
+pp. 230–244, Jan. 2022.
+[17] S. Li, Y. Wang, S. Guo, and C. Feng, ‘‘Task-oriented communi-
+cation for graph data: A graph information bottleneck approach,’’
+IEEE Trans. Cogn. Commun. Netw., early access, Sep. 23, 2024, doi:
+10.1109/TCCN.2024.3465651.
+[18] S. Guo, Y. Wang, S. Li, and N. Saeed, ‘‘Semantic importance-aware com-
+munications using pre-trained language models,’’ IEEE Commun. Lett.,
+vol. 27, no. 9, pp. 2328–2332, Sep. 2023.
+[19] H. Xie and Z. Qin, ‘‘A lite distributed semantic communication system
+for Internet of Things,’’ IEEE J. Sel. Areas Commun., vol. 39, no. 1,
+pp. 142–153, Jan. 2021.
+[20] K. Choi, K. Tatwawadi, T. Weissman, and S. Ermon, ‘‘NECST: Neural joint
+source-channel coding,’’ in Proc. Int. Conf. Mach. Learn., Long Beach,
+CA, USA, Jun. 2019, pp. 1182–1192.
+[21] M. Nemati, J. Park, and J. Choi, ‘‘VQ-VAE empowered wireless communi-
+cation for joint source-channel coding and beyond,’’ in Proc. IEEE Global
+Commun. Conf., Dec. 2023, pp. 3155–3160.
+[22] Q. Fu et al., ‘‘Vector quantized semantic communication system,’’ IEEE
+Wireless Commun. Lett., vol. 12, no. 6, pp. 982–986, Jun. 2023.
+[23] S. Xie, S. Ma, M. Ding, Y. Shi, M. Tang, and Y. Wu, ‘‘Robust informa-
+tion bottleneck for task-oriented communication with digital modulation,’’
+IEEE J. Sel. Areas Commun., vol. 41, no. 8, pp. 2577–2591, Aug. 2023.
+[24] Q. Hu, G. Zhang, Z. Qin, Y. Cai, G. Yu, and G. Y. Li, ‘‘Robust semantic
+communications with masked VQ-VAE enabled codebook,’’ IEEE Trans.
+Wireless Commun., vol. 22, no. 12, pp. 8707–8722, Dec. 2023.
+[25] A. Zhang, Y. Wang, and S. Guo, ‘‘On the utility-informativeness-security
+trade-off in discrete task-oriented semantic communication,’’ IEEE Com-
+mun. Lett., vol. 28, no. 6, pp. 1298–1302, Jun. 2024.
+[26] N. Farhani, N. Terbeh, and M. Zrigui, ‘‘Image to text conversion: State of
+the art and extended work,’’ in Proc. IEEE/ACS 14th Int. Conf. Comput.
+Syst. Appl. (AICCSA), Hammamet, Tunisia, Oct. 2017, pp. 937–943.
+[27] X. He and L. Deng, ‘‘Deep learning for image-to-text generation: A tech-
+nical overview,’’ IEEE Signal Process. Mag., vol. 34, no. 6, pp. 109–116,
+Nov. 2017.
+[28] Z. Zhang, Q. Yang, S. He, M. Sun, and J. Chen, ‘‘Wireless transmission of
+images with the assistance of multi-level semantic information,’’ in Proc.
+Int. Symp. Wireless Commun. Syst. (ISWCS), Hangzhou, China, Feb. 2022,
+pp. 1–6.
+[29] O. Vinyals, A. Toshev, S. Bengio, and D. Erhan, ‘‘Show and tell:
+Lessons learned from the 2015 MSCOCO image captioning challenge,’’
+IEEE Trans. Pattern Anal. Mach. Intell., vol. 39, no. 4, pp. 652–663,
+Apr. 2017.
+[30] A. Karpathy and L. Fei-Fei, ‘‘Deep visual-semantic alignments for gener-
+ating image descriptions,’’ IEEE Trans. Pattern Anal. Mach. Intell., vol. 39,
+no. 4, pp. 664–676, Apr. 2017.
+[31] K. Xu et al., ‘‘Show, attend and tell: Neural image caption generation with
+visual attention,’’ in Proc. 32nd Int. Conf. Mach. Learn. (ICML), vol. 37,
+Lille, France, 2015, pp. 2048–2057.
+[32] J. Li, D. Li, C. Xiong, and S. Hoi, ‘‘BLIP: Bootstrapping language-
+image pre-training for unified vision-language understanding and gener-
+ation,’’ in Proc. Int. Conf. Mach. Learn., Baltimore, MD, USA, 2022,
+pp. 12888–12900.
+[33] Y. Wang et al., ‘‘Large language model as a catalyst: A paradigm shift in
+base station siting optimization,’’ 2024, arXiv:2408.03631.
+[34] J. Devlin, M.-W. Chang, K. Lee, and K. Toutanova, ‘‘BERT: Pre-training
+of deep bidirectional transformers for language understanding,’’ 2018,
+arXiv:1810.04805.
+[35] A. Ramesh et al., ‘‘Zero-shot text-to-image generation,’’ in Proc. Int. Conf.
+Mach. Learn. (ICML), Vienna, Austria, Jul. 2021, pp. 8821–8831.
+[36] C. Saharia, ‘‘Photorealistic text-to-image diffusion models with deep lan-
+guage understanding,’’ in Proc. Adv. Neural Inf. Process. Syst. (NeurIPS),
+New Orleans, LA, USA, Nov. 2022, pp. 36479–36494.
+[37] R. Rombach, A. Blattmann, D. Lorenz, P. Esser, and B. Ommer,
+‘‘High-resolution image synthesis with latent diffusion models,’’ in Proc.
+IEEE/CVF Conf. Comput. Vis. Pattern Recognit., New Orleans, LA, USA,
+Jun. 2022, pp. 10684–10695.
+[38] O. Ronneberger, P. Fischer, and T. Brox, ‘‘U-Net: Convolutional networks
+for biomedical image segmentation,’’ in Proc. Int. Conf. Med. Image Com-
+put. Comput.-Assist. Intervent. (MICCAI), Munich, Germany, Oct. 2015,
+pp. 234–241.
+[39] J. Deng, W. Dong, R. Socher, L.-J. Li, K. Li, and L. Fei-Fei, ‘‘ImageNet:
+A large-scale hierarchical image database,’’ in Proc. IEEE Conf. Comput.
+Vis. Pattern Recognit., Miami, FL, USA, Jun. 2009, pp. 248–255.
+[40] H. Zhang, S. Shao, M. Tao, X. Bi, and K. B. Letaief, ‘‘Deep learning-
+enabled semantic communication systems with task-unaware transmitter
+and dynamic data,’’ IEEE J. Sel. Areas Commun., vol. 41, no. 1,
+pp. 170–185, Jan. 2023.
+[41] A. Garcia-Garcia, S. Orts-Escolano, S. Oprea, V. Villena-Martinez,
+P. Martinez-Gonzalez, and J. Garcia-Rodriguez, ‘‘A survey on deep learn-
+ing techniques for image and video semantic segmentation,’’ Appl. Soft
+Comput., vol. 70, pp. 41–65, Sep. 2018.
+[42] Y. Li, X. Zhang, X. Xu, and Y.-A. Tan, ‘‘A robust packet-dropout covert
+channel over wireless networks,’’ IEEE Wireless Commun., vol. 27, no. 3,
+pp. 60–65, Jun. 2020.
+[43] C. Borchert, H. Schirmeier, and O. Spinczyk, ‘‘Compiler-implemented
+differential checksums: Effective detection and correction of tran-
+sient and permanent memory errors,’’ in Proc. 53rd Annu. IEEE/IFIP
+Int. Conf. Dependable Syst. Netw. (DSN), Porto, Portugal, Jun. 2023,
+pp. 81–94.
+[44] R. Zhang et al., ‘‘Generative AI agents with large language model for
+satellite networks via a mixture of experts transmission,’’ IEEE J. Sel.
+Areas Commun., vol. 42, no. 12, pp. 3581–3596, Dec. 2024.
+VOLUME 3, 2025
+245
+
+

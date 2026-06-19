@@ -1,0 +1,22 @@
+{
+  "0": {
+    "original": "a blue truck driving down a highway with seagulls flying around",
+    "corrected": "a blue truck driving down a highway with seagulls flying around"
+  },
+  "1": {
+    "original": "a forest filled with lots of tall trees",
+    "corrected": "a forest filled with lots of small trees"
+  },
+  "2": {
+    "original": "a bald eagle flying over a body of water",
+    "corrected": "a bald eagle flying over a body of water"
+  },
+  "3": {
+    "original": "a close up of some white flowers on a tree",
+    "corrected": "a close up of some white flowers on a tree"
+  },
+  "4": {
+    "original": "a beach with palm trees and clear blue water",
+    "corrected": "a beach with palm trees and clear blue water"
+  }
+}
